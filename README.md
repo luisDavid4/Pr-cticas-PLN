@@ -1,2 +1,2 @@
-# Pr-cticas-PLN
+# Prácticas-PLN
 Luis David Panamá Miranda. UV MSICU
