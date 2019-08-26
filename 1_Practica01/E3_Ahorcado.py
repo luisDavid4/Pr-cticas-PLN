@@ -16,10 +16,36 @@ class Ahorcado:
         self.l = []  # letras encontradas
 
     def jugar(self, c):
-        cm = c.lower()
-        if cm in self.p:
-            self.l.append(cm)
-        else:
+        cMinus = c.lower()
+        cAcento = ''
+        cU = ''
+        if cMinus == 'a' or cMinus == 'á':
+            cMinus = 'a'
+            cAcento = 'á'
+        elif cMinus == 'e' or cMinus == 'é':
+            cMinus = 'e'
+            cAcento = 'é'
+        elif cMinus == 'i' or cMinus == 'í':
+            cMinus = 'i'
+            cAcento = 'í'
+        elif cMinus == 'o' or cMinus == 'ó':
+            cMinus = 'o'
+            cAcento = 'ó'
+        elif cMinus == 'u' or cMinus == 'ú' or cMinus == 'ü':
+            cMinus = 'u'
+            cAcento = 'ú'
+            cU = 'ü'
+        atino = False
+        if cMinus != '' and cMinus in self.p:
+            self.l.append(cMinus)
+            atino = True
+        if cAcento != '' and cAcento in self.p:
+            self.l.append(cAcento)
+            atino = True
+        if cU != '' and cU in self.p:
+            self.l.append(cU)
+            atino = True
+        if not atino:
             self.e += 1
 
     def estado(self):
