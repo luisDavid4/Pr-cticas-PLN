@@ -3,6 +3,7 @@
 
 import os
 import random
+import operator
 import nltk
 from nltk.tokenize.toktok import ToktokTokenizer
 
@@ -19,20 +20,44 @@ def tokenizacion(ruta):
         'tokenizers/punkt/spanish.pickle')
     # Obtener oraciones de un texto
     texto = ""
-    # with open(ruta, "w") as fp:
-    "C:\Users\David\Documents\Repositorios\Practicas-PLN\3_Practica03\recursos\practica3.txt"
-    with open("recursos"+os.path.sep+"practica3.txt", "w") as fp:
+    with open("recursos/practica3.txt", "r", encoding="utf8") as fp:
+        # with open(ruta, "r", encoding="utf8") as fp:
         texto = fp.read()
     oraciones = es_tokenizador_oraciones.tokenize(texto)
     # Obtener tokens de cada oración
+    tokens = []
     for s in oraciones:
-        print([t for t in toktok.tokenize(s)])
+        # tokens.append([t for t in toktok.tokenize(s)])
+        tokens += ([t for t in toktok.tokenize(s)])
+    return tokens
+
+
+def distribucionFrecuencias(tokens):
+    frecuencias = {}
+    # Sacar elementos unicos
+    # myset = set(tokens)
+    # tokensUnicos = list(myset)
+    tokensUnicos = set(tokens)
+    print(tokens)
+    print(len(tokens))
+    print(tokensUnicos)
+    print(len(tokensUnicos))
+    for token in tokensUnicos:
+        print(f"{token} {str(tokens.count(token))}")
+        frecuencias[token] = tokens.count(token)
+    print(frecuencias)
+    ordenado = sorted(frecuencias.items(), key=operator.itemgetter(1))
+    ordenado.reverse()
+    print(ordenado)
 
 
 def main():
     mensaje = ""
-    ruta = input(f"Ingrese la ruta: ")
-    tokenizacion(ruta)
+    # ruta = input(f"Ingrese la ruta: ")
+    tokens = tokenizacion("ruta")
+    distribucionFrecuencias(tokens)
+
+    # print(tokensUnicos)
     return mensaje
 
 
@@ -49,4 +74,8 @@ if __name__ == "__main__":
             mensaje = f"\nError detectado: {e}"
         # '''
         print(f"{mensaje}")
+        # '''Comentar/Descomentar
+        reiniciar = 'n'
+        '''
         reiniciar = input(f"\n¿Desea reiniciar (s/n)? ")
+        # '''
