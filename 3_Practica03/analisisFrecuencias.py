@@ -6,6 +6,8 @@ import random
 import operator
 import nltk
 from nltk.tokenize.toktok import ToktokTokenizer
+from nltk.corpus import stopwords
+from nltk.stem.snowball import SnowballStemmer
 
 
 def clear(): return os.system("cls")
@@ -20,8 +22,7 @@ def tokenizacion(ruta):
         'tokenizers/punkt/spanish.pickle')
     # Obtener oraciones de un texto
     texto = ""
-    with open("recursos/practica3.txt", "r", encoding="utf8") as fp:
-        # with open(ruta, "r", encoding="utf8") as fp:
+    with open(ruta, "r", encoding="utf8") as fp:
         texto = fp.read()
     oraciones = es_tokenizador_oraciones.tokenize(texto)
     # Obtener tokens de cada oración
@@ -32,32 +33,85 @@ def tokenizacion(ruta):
     return tokens
 
 
-def distribucionFrecuencias(tokens):
-    frecuencias = {}
+def elementosUnicos(tokens):
     # Sacar elementos unicos
     # myset = set(tokens)
     # tokensUnicos = list(myset)
     tokensUnicos = set(tokens)
-    print(tokens)
-    print(len(tokens))
-    print(tokensUnicos)
-    print(len(tokensUnicos))
+    return tokensUnicos
+
+
+def distribucionFrecuencias(tokensUnicos, tokens):
+    frecuencias = {}
     for token in tokensUnicos:
-        print(f"{token} {str(tokens.count(token))}")
+        # print(f"{token} {str(tokens.count(token))}")
         frecuencias[token] = tokens.count(token)
-    print(frecuencias)
-    ordenado = sorted(frecuencias.items(), key=operator.itemgetter(1))
-    ordenado.reverse()
-    print(ordenado)
+    # print(frecuencias)
+    # Ordenar decrecientemente segun el numero de repeticiones
+    frecOrdenadas = sorted(frecuencias.items(),
+                           key=operator.itemgetter(1), reverse=True)
+    print(frecOrdenadas)
+    return frecOrdenadas
+
+
+def reduccionDimensionalidad(listaUnicos, esListaPares):
+    sinPalabrasFuncionales = []
+    # Quitar las palabras funcionales de la lista
+    if esListaPares:  # verificar si es lista de pares
+        sinPalabrasFuncionales = [x for x in listaUnicos
+                                  if x[0] not in stopwords.words("spanish")]
+    else:
+        sinPalabrasFuncionales = [x for x in listaUnicos
+                                  if x not in stopwords.words("spanish")]
+    # print(stopwords.words("spanish"))
+    return sinPalabrasFuncionales
+
+
+def distribucionFrecuenciasStemming(tokensReducidos):
+    # Stemmer spanish
+    stemmer = SnowballStemmer("spanish")
+    tokensStem = []
+    for t in tokensReducidos:
+        tokensStem.append(stemmer.stem(t))  # Obtener la raiz
+    tokensStemUnicos = elementosUnicos(tokensStem)
+    frecuencias = {}
+    for token in tokensStemUnicos:
+        frecuencias[token] = tokensStem.count(token)
+    # Ordenar decrecientemente segun el numero de repeticiones
+    frecOrdenadas = sorted(frecuencias.items(),
+                           key=operator.itemgetter(1), reverse=True)
+    print(frecOrdenadas)
+    return frecOrdenadas
+
+
+def distribucionFrecuenciasLematizacionIngenua(tokensReducidos):
+    lineas = []
+    with open("recursos\lemmatization-es.txt", "r", encoding="utf8") as fp:
+        lineas = fp.readlines()
+    # for t in tokensReducidos:
+    #     tokensStem.append(stemmer.stem(t))  # Obtener la raiz
+    # tokensStemUnicos = elementosUnicos(tokensStem)
+    # frecuencias = {}
+    # for token in tokensStemUnicos:
+    #     frecuencias[token] = tokensStem.count(token)
+    # # Ordenar decrecientemente segun el numero de repeticiones
+    # frecOrdenadas = sorted(frecuencias.items(),
+    #                        key=operator.itemgetter(1), reverse=True)
+    # print(frecOrdenadas)
+    # return frecOrdenadas
+    return None
 
 
 def main():
     mensaje = ""
     # ruta = input(f"Ingrese la ruta: ")
-    tokens = tokenizacion("ruta")
-    distribucionFrecuencias(tokens)
-
-    # print(tokensUnicos)
+    tokens = tokenizacion("recursos/practica3bo.txt")
+    tokensUnicos = elementosUnicos(tokens)
+    tokensConfrecuencias = distribucionFrecuencias(tokensUnicos, tokens)
+    reducidos = reduccionDimensionalidad(tokensUnicos, False)
+    tokensStemConfrecuencias = distribucionFrecuenciasStemming(reducidos)
+    tokensLemaConfrecuencias = distribucionFrecuenciasLematizacionIngenua(
+        reducidos)
     return mensaje
 
 
