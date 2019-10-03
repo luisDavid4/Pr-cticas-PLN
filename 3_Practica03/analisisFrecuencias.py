@@ -11,7 +11,6 @@ from nltk.stem.snowball import SnowballStemmer
 
 
 def clear(): return os.system("cls")
-# diccionario[linea_segmentada[1]=linea_segmentada[0]]
 
 
 def tokenizacion(ruta):
@@ -88,9 +87,17 @@ def distribucionFrecuenciasLematizacionIngenua(tokensReducidos):
     lineas = []
     with open("recursos\lemmatization-es.txt", "r", encoding="utf8") as fp:
         lineas = fp.readlines()
-    # for t in tokensReducidos:
-    #     tokensStem.append(stemmer.stem(t))  # Obtener la raiz
-    # tokensStemUnicos = elementosUnicos(tokensStem)
+    # El diccionario tiene la estructura: palabraAComparar:lema
+    diccionario = dict()
+    for linea in lineas:
+        tokens = linea.split()
+        diccionario[tokens[1]] = tokens[0]
+    listaRepetidos = []
+    for token in tokensReducidos:
+        # la funcion de get manda parámetros (itemBuscar, valorDefault)
+        lema = diccionario.get(token, token)
+        listaRepetidos.append(lema)
+
     # frecuencias = {}
     # for token in tokensStemUnicos:
     #     frecuencias[token] = tokensStem.count(token)
@@ -110,8 +117,9 @@ def main():
     tokensConfrecuencias = distribucionFrecuencias(tokensUnicos, tokens)
     reducidos = reduccionDimensionalidad(tokensUnicos, False)
     tokensStemConfrecuencias = distribucionFrecuenciasStemming(reducidos)
-    tokensLemaConfrecuencias = distribucionFrecuenciasLematizacionIngenua(
+    tokensLemaIngConfrecuencias = distribucionFrecuenciasLematizacionIngenua(
         reducidos)
+    correctorOrtografico()
     return mensaje
 
 
